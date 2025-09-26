@@ -1,0 +1,79 @@
+Create DATABASE AnalisisVentasDO;
+GO
+Use AnalisisVentasDO;
+GO
+
+CREATE TABLE Customers (
+    CustomerID INT PRIMARY KEY, 
+    FirstName NVARCHAR(50) NOT NULL,
+    LastName NVARCHAR(50) NOT NULL,
+    Email NVARCHAR(100),
+    Phone NVARCHAR(20),
+    City NVARCHAR(50),
+    Country NVARCHAR(50)
+);
+GO
+
+CREATE TABLE Products (
+    ProductID INT PRIMARY KEY, 
+    ProductName NVARCHAR(100) NOT NULL,
+    Category NVARCHAR(50),
+    Price DECIMAL(10,2) NOT NULL,
+    Stock INT NOT NULL
+);
+GO
+
+CREATE TABLE Orders (
+    OrderID INT PRIMARY KEY, 
+    CustomerID INT NOT NULL,
+    OrderDate DATE NOT NULL,
+    Status NVARCHAR(20),
+    CONSTRAINT FK_Orders_Customers FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
+);
+GO
+
+CREATE TABLE Order_Details (
+    OrderID INT NOT NULL,
+    ProductID INT NOT NULL,
+    Quantity INT NOT NULL,
+    TotalPrice DECIMAL(12,2) NOT NULL,
+    CONSTRAINT PK_OrderDetails PRIMARY KEY (OrderID, ProductID), 
+    CONSTRAINT FK_OrderDetails_Orders FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
+    CONSTRAINT FK_OrderDetails_Products FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
+);
+GO
+ALTER TABLE Customers
+ALTER COLUMN Country NVARCHAR(100);
+
+ALTER TABLE Customers
+ALTER COLUMN Phone NVARCHAR(50);
+
+Select * from Customers
+
+TRUNCATE TABLE Order_Details; 
+TRUNCATE TABLE Orders;
+DELETE FROM Orders; 
+
+SELECT 'Customers' AS Tabla, COUNT(*) AS TotalRegistros FROM Customers
+UNION ALL
+SELECT 'Products', COUNT(*) FROM Products
+UNION ALL
+SELECT 'Orders', COUNT(*) FROM Orders
+UNION ALL
+SELECT 'Order_Details', COUNT(*) FROM Order_Details;
+
+--Ya para Customers
+SELECT TOP 5 CustomerID, FirstName, LastName, City, Country 
+FROM Customers;
+
+--En Products
+SELECT TOP 5 ProductID, ProductName, Category, Price, Stock 
+FROM Products;
+
+-- Las Orders
+SELECT TOP 5 OrderID, CustomerID, OrderDate, Status 
+FROM Orders;
+
+--Y los detalles de los pedidos
+SELECT TOP 5 OrderID, ProductID, Quantity, TotalPrice 
+FROM Order_Details;
